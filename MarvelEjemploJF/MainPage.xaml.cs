@@ -1,25 +1,32 @@
-﻿namespace MarvelEjemploJF
+﻿using MarvelEjemploJF.Models;
+using MarvelEjemploJF.Services;
+using System.Collections.ObjectModel;
+
+namespace MarvelEjemploJF;
+
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public ObservableCollection<JFMarvelCharacterc> Characters { get; set; }
+
+    public MainPage()
     {
-        int count = 0;
+        InitializeComponent();
 
-        public MainPage()
-        {
-            InitializeComponent();
-        }
+        Characters = new ObservableCollection<JFMarvelCharacterc>();
+        BindingContext = this;
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        LoadCharacters();
     }
 
+    private async void LoadCharacters()
+    {
+        var service = new JFMarvelServices();
+        var characters = await service.GetCharactersAsync();
+        foreach (var character in characters)
+        {
+            Characters.Add(character);
+        }
+
+    }
 }
